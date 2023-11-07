@@ -114,7 +114,7 @@ class Board:
         return False
 
     def begin(self):
-        self.occupied = []
+        self.occupied = [] #Обнуляем список занятых клеток после вызова игры
 
 class Player:
     def __init__(self, board, enemy_board):
@@ -144,16 +144,16 @@ class AI(Player):
 class User(Player):
     def ask(self):
         while True:
-            coords = input("Введите координаты (напр., 2,3): ").split()
+            coords = input("Введите координаты (напр., 2,3):").split()
 
             if len(coords) != 2:
-                print(" Введите 2 координаты! ")
+                print("Введите 2 координаты!")
                 continue
 
             x, y = coords
 
             if not (x.isdigit()) or not (y.isdigit()):
-                print(" Вводите числа!. ")
+                print("Вводите числа!")
                 continue
 
             x, y = int(x), int(y)
@@ -164,12 +164,12 @@ class User(Player):
 class Game:
     def __init__(self, size=6):
         self.size = size
-        pl = self.random_board()
-        co = self.random_board()
-        co.hid = True
+        player = self.random_board()
+        computer = self.random_board()
+        computer.hid = True
 
-        self.ai = AI(co, pl)
-        self.us = User(pl, co)
+        self.ai = AI(computer, player)
+        self.user = User(player, computer)
 
     def random_board(self):
         board = None
@@ -183,7 +183,7 @@ class Game:
         for length in [3, 2, 2, 1, 1, 1, 1]:
             while True:
                 attempts += 1
-                if attempts > 2000:
+                if attempts > 1000:
                     return None
                 ship = Ship(length, Dot(randint(0, 5), randint(0, 5)), randint(0, 1))
                 try:
@@ -195,10 +195,10 @@ class Game:
         return board
 
     def greet(self):
-        print("Добро пожаловать в игру!")
-        print("   Формат ввода: x y ")
-        print("   x - номер строки  ")
-        print("   y - номер столбца ")
+        print('Добро пожаловать в игру "Морской бой"!')
+        print("Введите 2 координаты: x и y ")
+        print("x - номер строки  ")
+        print("y - номер столбца ")
         print("игрок и компьютер ходят по очереди. Если игрок или компьютер попадают по кораблю, он ходит еще раз.")
         print("если промах - ход передается другому игроку.")
         print("Побеждает тот, кто первый уничтожит все корабли противника!")
@@ -206,31 +206,31 @@ class Game:
     def loop(self):
         num = 0
         while True:
-            print("-" * 20)
-            print("User's board:")
-            print(self.us.board)
-            print("-" * 20)
-            print("Computer's board:")
+            print("---------------------------")
+            print("Доска игрока:")
+            print(self.user.board)
+            print("---------------------------")
+            print("Доска компьютера:")
             print(self.ai.board)
             if num % 2 == 0:
                 print("-" * 20)
-                print("User's move:")
-                repeat = self.us.move()
+                print("Ход игрока:")
+                repeat = self.user.move()
             else:
-                print("-" * 20)
-                print("Computer's move:")
+                print("---------------------------")
+                print("Ход компьютера:")
                 repeat = self.ai.move()
             if repeat:
                 num -= 1
 
             if self.ai.board.list_of_ships == []:
-                print("-" * 20)
-                print("User wins!")
+                print("---------------------------")
+                print("Игрок победил!")
                 break
 
-            if self.us.board.list_of_ships == []:
-                print("-" * 20)
-                print("Computer wins!")
+            if self.user.board.list_of_ships == []:
+                print("---------------------------")
+                print("компьютер победил!")
                 break
             num += 1
 
