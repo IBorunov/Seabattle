@@ -14,8 +14,8 @@ class WrongShipError(BoardException):
     pass
 class Dot:
     def __init__(self, x, y):
-        self.x = x - 1   # Координата по оси x
-        self.y = y - 1  # Координата по оси y
+        self.x = x
+        self.y = y
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -102,7 +102,7 @@ class Board:
                 self.field[dot.x][dot.y] = "X"
                 if ship.hp == 0:
                     self.list_of_ships.remove(ship)
-                    self.contour(ship)
+                    self.contour(ship, ship_destroyed=True)
                     print("Корабль уничтожен!")
                     return False
                 else:
@@ -158,7 +158,7 @@ class User(Player):
 
             x, y = int(x), int(y)
 
-            return Dot(x, y)
+            return Dot(x-1, y-1)
 
 
 class Game:
@@ -199,12 +199,10 @@ class Game:
         print("Введите 2 координаты: x и y ")
         print("x - номер строки  ")
         print("y - номер столбца ")
-        print("игрок и компьютер ходят по очереди. Если игрок или компьютер попадают по кораблю, он ходит еще раз.")
-        print("если промах - ход передается другому игроку.")
         print("Побеждает тот, кто первый уничтожит все корабли противника!")
 
     def loop(self):
-        num = 0
+        count = 0
         while True:
             print("---------------------------")
             print("Доска игрока:")
@@ -212,7 +210,7 @@ class Game:
             print("---------------------------")
             print("Доска компьютера:")
             print(self.ai.board)
-            if num % 2 == 0:
+            if count % 2 == 0:
                 print("-" * 20)
                 print("Ход игрока:")
                 repeat = self.user.move()
@@ -221,7 +219,7 @@ class Game:
                 print("Ход компьютера:")
                 repeat = self.ai.move()
             if repeat:
-                num -= 1
+                count -= 1
 
             if self.ai.board.list_of_ships == []:
                 print("---------------------------")
@@ -232,7 +230,7 @@ class Game:
                 print("---------------------------")
                 print("компьютер победил!")
                 break
-            num += 1
+            count += 1
 
     def start(self):
         self.greet()
